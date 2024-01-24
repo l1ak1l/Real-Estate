@@ -1,62 +1,83 @@
-import React, { useState } from 'react'
-import { Link,useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
-  const [formData,setFormData] = useState({})
-  const [error ,setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const handleChnage = (e) => {
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+      [e.target.id]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      setLoading(true)
-      const res = await fetch('api/auth/signup',
-      {
-        method: "POST",
-        headers : {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
           'Content-Type': 'application/json',
         },
-        body : JSON.stringify(formData),
-      }
-      )
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
-      if (data.success === false){
-        setError(data.message)
-        setLoading(false)
-        setError(null)
-        navigate('/sign-in');
+      console.log(data);
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
       }
-
+      setLoading(false);
+      setError(null);
+      navigate('/sign-in');
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
     }
-    catch{
-      setLoading(flase)
-      setError(error.message)
-    }
-   
-    
   };
   return (
-    <div className='p-3 mx-auto max-w-lg '>
-      <p className='text-3xl text-center font-semibold my-7'>Sign Up</p>
+    <div className='p-3 max-w-lg mx-auto'>
+      <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <input type='text' placeholder='Username' id='Username' className='rounded-lg boarder p-3' onChange={handleChnage}/>
-        <input type='text' placeholder='Email' id='Email' className='rounded-lg boarder p-3'  onChange={handleChnage}/>
-        <input type='text' placeholder='Password' id='Password' className='rounded-lg boarder p-3'  onChange={handleChnage}/>
-        <button disabled={loading} className='bg-slate-700 text-white uppercase hover:opacity-95 rounded-lg p-3 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
+        <input
+          type='text'
+          placeholder='username'
+          className='border p-3 rounded-lg'
+          id='username'
+          onChange={handleChange}
+        />
+        <input
+          type='email'
+          placeholder='email'
+          className='border p-3 rounded-lg'
+          id='email'
+          onChange={handleChange}
+        />
+        <input
+          type='password'
+          placeholder='password'
+          className='border p-3 rounded-lg'
+          id='password'
+          onChange={handleChange}
+        />
+
+        <button
+          disabled={loading}
+          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+        >
+          {loading ? 'Loading...' : 'Sign Up'}
+        </button>
       </form>
-      <div className='flex gap-2'>
-        <p>Have an Account?</p>
-        <Link to={"/sign-in"}>
+      <div className='flex gap-2 mt-5'>
+        <p>Have an account?</p>
+        <Link to={'/sign-in'}>
           <span className='text-blue-700'>Sign in</span>
         </Link>
       </div>
       {error && <p className='text-red-500 mt-5'>{error}</p>}
     </div>
-  )
+  );
 }
