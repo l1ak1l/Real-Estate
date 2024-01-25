@@ -1,61 +1,81 @@
-import React, { useState } from 'react'
-import { Link,useNavigate } from 'react-router-dom'
-
-export default function SignUp() {
-  const [formData,setFormData] = useState({})
-  const [error ,setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const handleChnage = (e) => {
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
+import OAuth from '../Components/OAuth';
+export default function SignIn() {
+  const [formData, setFormData] = useState({});
+  const { loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+      [e.target.id]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      setLoading(true)
-      const res = await fetch('api/auth/signin',
-      {
-        method: "POST",
-        headers : {
+    try {
+      dispatch(signInStart());
+      const res = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
           'Content-Type': 'application/json',
         },
-        body : JSON.stringify(formData),
-      }
-      )
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
-      if (data.success === false){
-        setError(data.message)
-        setLoading(false)
-        setError(null)
-        navigate('/');
+      console.log(data);
+      if (data.success === false) {
+        dispatch(signInFailure(data.message));
+        return;
       }
-
+      dispatch(signInSuccess(data));
+      navigate('/');
+    } catch (error) {
+      dispatch(signInFailure(error.message));
     }
-    catch{
-      setLoading(flase)
-      setError(error.message)
-    }
-   
-    
   };
   return (
-    <div className='p-3 mx-auto max-w-lg '>
-      <p className='text-3xl text-center font-semibold my-7'>Sign In</p>
+    <div className='p-3 max-w-lg mx-auto'>
+      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <input type='text' placeholder='Email' id='Email' className='rounded-lg boarder p-3'  onChange={handleChnage}/>
-        <input type='text' placeholder='Password' id='Password' className='rounded-lg boarder p-3'  onChange={handleChnage}/>
-        <button disabled={loading} className='bg-slate-700 text-white uppercase hover:opacity-95 rounded-lg p-3 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
+        <input
+          type='email'
+          placeholder='email'
+          className='border p-3 rounded-lg'
+          id='email'
+          onChange={handleChange}
+        />
+        <input
+          type='password'
+          placeholder='password'
+          className='border p-3 rounded-lg'
+          id='password'
+          onChange={handleChange}
+        />
+
+        <button
+          disabled={loading}
+          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+        >
+          {loading ? 'Loading...' : 'Sign In'}
+        </button>
+        <OAuth/>
       </form>
-      <div className='flex gap-2'>
-        <p>Dont have an Account?</p>
-        <Link to={"/sign-up"}>
+      <div className='flex gap-2 mt-5'>
+        <p>Dont have an account?</p>
+        <Link to={'/sign-up'}>
           <span className='text-blue-700'>Sign up</span>
         </Link>
+        
       </div>
       {error && <p className='text-red-500 mt-5'>{error}</p>}
     </div>
-  )
+  );
 }
