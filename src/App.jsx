@@ -5,6 +5,7 @@ import About from './Pages/About'
 import SignIn from './Pages/SignIn'
 import SignUp from './Pages/SignUp'
 import Profile from './Pages/Profile'
+import CreateListing from './Pages/CreateListing';
 import Header from './Components/Header'
 import PrivateRoute from './Components/PrivateRoute'
 export default function App() {
