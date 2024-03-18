@@ -23,9 +23,10 @@ export default function Listing() {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [contact, setContact] = useState(false); 
+  const [copied, setCopied] = useState(false); 
+  const [contact, setContact] = useState(false);
   const params = useParams();
+
   const {currentUser} = useSelector((state) => state.user);
   useEffect(() => {
     const fetchListing = async () => {
@@ -104,7 +105,7 @@ export default function Listing() {
               </p>
               {listing.offer && (
                 <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                  ${+listing.regularPrice - +listing.discountPrice}
+                  ${+listing.regularPrice - +listing.discountPrice} OFF
                 </p>
               )}
             </div>
@@ -135,7 +136,9 @@ export default function Listing() {
               </li>
             </ul>
             {currentUser && listing.userRef !== currentUser._id && !contact && (
-              <button onClick={()=>setContact(true)} className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>
+             <button
+             onClick={() => setContact(true)}
+             className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>
                 Contact landlord
               </button>
             )}
