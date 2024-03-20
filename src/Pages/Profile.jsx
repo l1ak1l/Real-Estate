@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
+
 import {
   getDownloadURL,
   getStorage,
@@ -115,6 +116,7 @@ export default function Profile() {
         return;
       }
       dispatch(deleteUserSuccess(data));
+      window.location.href = '/';
     } catch (error) {
       dispatch(deleteUserFailure(data.message));
     }
