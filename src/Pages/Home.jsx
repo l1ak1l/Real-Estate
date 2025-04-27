@@ -50,7 +50,7 @@ export default function Home() {
         <div className='relative z-10 h-full flex items-center justify-center'>
           <div className='max-w-6xl mx-auto px-6 text-center text-white'>
             <h1 className='text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight'>
-              Discover Your <span className='text-blue-700'>Dream</span> Property
+              Discover Your Dream Property
             </h1>
             <p className='text-xl sm:text-2xl mb-8 max-w-2xl mx-auto font-light opacity-90'>
               Premium real estate solutions for modern living
@@ -92,7 +92,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
               {offerListings.map((listing) => (
                 <ListingItem listing={listing} key={listing._id} />
               ))}
@@ -117,7 +117,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
               {rentListings.map((listing) => (
                 <ListingItem listing={listing} key={listing._id} />
               ))}
@@ -142,7 +142,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
               {saleListings.map((listing) => (
                 <ListingItem listing={listing} key={listing._id} />
               ))}
