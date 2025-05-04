@@ -116,6 +116,17 @@ export default function About() {
         </div>
       </div>
 
+      {/* New Google Maps Section */}
+      <div className="mb-16 mt-8 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3402.5515130265994!2d74.30043917593764!3d31.48152117423189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391903f08ebc7e8b%3A0x47e934f4cd34790!2sFAST%20NUCES%20Lahore!5e0!3m2!1sen!2s!4v1746362010250!5m2!1sen!2s" 
+          className="w-full h-[450px] border-0"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+
       {/* Contact Section */}
       <div className="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
