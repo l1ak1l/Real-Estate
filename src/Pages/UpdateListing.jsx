@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FiUploadCloud, FiX, FiHome, FiDollarSign, FiCheck, FiInfo } from 'react-icons/fi';
+
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -170,217 +167,274 @@ export default function CreateListing() {
     }
   };
   return (
-    <main className='p-3 max-w-4xl mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>
-        Update a Listing
-      </h1>
-      <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
-        <div className='flex flex-col gap-4 flex-1'>
-          <input
-            type='text'
-            placeholder='Name'
-            className='border p-3 rounded-lg'
-            id='name'
-            maxLength='62'
-            minLength='10'
-            required
-            onChange={handleChange}
-            value={formData.name}
-          />
-          <textarea
-            type='text'
-            placeholder='Description'
-            className='border p-3 rounded-lg'
-            id='description'
-            required
-            onChange={handleChange}
-            value={formData.description}
-          />
-          <input
-            type='text'
-            placeholder='Address'
-            className='border p-3 rounded-lg'
-            id='address'
-            required
-            onChange={handleChange}
-            value={formData.address}
-          />
-          <div className='flex gap-6 flex-wrap'>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='sale'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.type === 'sale'}
-              />
-              <span>Sell</span>
+    <main className='max-w-6xl mx-auto p-4'>
+      <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8'>
+        <h1 className='text-2xl font-semibold text-gray-900 mb-6'>Update Property Listing</h1>
+
+        <form onSubmit={handleSubmit} className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+          {/* Left Column */}
+          <div className='space-y-6'>
+            {/* Basic Info */}
+            <div className='space-y-4'>
+              <h2 className='text-sm font-semibold text-gray-700 uppercase tracking-wide'>Property Details</h2>
+              <div className='space-y-3'>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>Property Title</label>
+                  <input
+                    type='text'
+                    id='name'
+                    placeholder='Modern Downtown Apartment'
+                    className='w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all'
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>Description</label>
+                  <textarea
+                    id='description'
+                    placeholder='Describe your property...'
+                    rows='4'
+                    className='w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all'
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>Address</label>
+                  <input
+                    type='text'
+                    id='address'
+                    placeholder='Enter full address'
+                    className='w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all'
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='rent'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.type === 'rent'}
-              />
-              <span>Rent</span>
+
+            {/* Features */}
+            <div className='space-y-4'>
+              <h2 className='text-sm font-semibold text-gray-700 uppercase tracking-wide'>Features</h2>
+              <div className='grid grid-cols-2 gap-3'>
+                {['parking', 'furnished', 'offer'].map((feature) => (
+                  <label
+                    key={feature}
+                    className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all ${
+                      formData[feature] ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type='checkbox'
+                      id={feature}
+                      checked={formData[feature]}
+                      onChange={handleChange}
+                      className='hidden'
+                    />
+                    <span className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
+                      formData[feature] ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'
+                    }`}>
+                      {formData[feature] && <FiCheck className='text-white text-xs' />}
+                    </span>
+                    <span className='text-sm capitalize'>{feature}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='parking'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.parking}
-              />
-              <span>Parking spot</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='furnished'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.furnished}
-              />
-              <span>Furnished</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='offer'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.offer}
-              />
-              <span>Offer</span>
-            </div>
-          </div>
-          <div className='flex flex-wrap gap-6'>
-            <div className='flex items-center gap-2'>
-              <input
-                type='number'
-                id='bedrooms'
-                min='1'
-                max='10'
-                required
-                className='p-3 border border-gray-300 rounded-lg'
-                onChange={handleChange}
-                value={formData.bedrooms}
-              />
-              <p>Beds</p>
-            </div>
-            <div className='flex items-center gap-2'>
-              <input
-                type='number'
-                id='bathrooms'
-                min='1'
-                max='10'
-                required
-                className='p-3 border border-gray-300 rounded-lg'
-                onChange={handleChange}
-                value={formData.bathrooms}
-              />
-              <p>Baths</p>
-            </div>
-            <div className='flex items-center gap-2'>
-              <input
-                type='number'
-                id='regularPrice'
-                min='50'
-                max='10000000'
-                required
-                className='p-3 border border-gray-300 rounded-lg'
-                onChange={handleChange}
-                value={formData.regularPrice}
-              />
-              <div className='flex flex-col items-center'>
-                <p>Regular price</p>
-                {formData.type === 'rent' && (
-                  <span className='text-xs'>($ / month)</span>
+
+            {/* Pricing */}
+            <div className='space-y-4'>
+              <h2 className='text-sm font-semibold text-gray-700 uppercase tracking-wide'>Pricing & Type</h2>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <label className='text-sm font-medium text-gray-700'>Listing Type</label>
+                  <div className='flex gap-2'>
+                    {['rent', 'sale'].map((type) => (
+                      <button
+                        key={type}
+                        type='button'
+                        onClick={() => setFormData(prev => ({ ...prev, type }))}
+                        className={`flex-1 text-sm px-4 py-2 rounded-md transition-colors ${
+                          formData.type === type 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className='space-y-2'>
+                  <label className='text-sm font-medium text-gray-700'>Regular Price</label>
+                  <div className='relative'>
+                    <FiDollarSign className='absolute left-3 top-3 text-gray-400' />
+                    <input
+                      type='number'
+                      id='regularPrice'
+                      className='w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
+                      value={formData.regularPrice}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {formData.offer && (
+                  <div className='space-y-2 col-span-2'>
+                    <label className='text-sm font-medium text-gray-700'>Discounted Price</label>
+                    <div className='relative'>
+                      <FiDollarSign className='absolute left-3 top-3 text-gray-400' />
+                      <input
+                        type='number'
+                        id='discountPrice'
+                        className='w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
+                        value={formData.discountPrice}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
-            {formData.offer && (
-              <div className='flex items-center gap-2'>
-                <input
-                  type='number'
-                  id='discountPrice'
-                  min='0'
-                  max='10000000'
-                  required
-                  className='p-3 border border-gray-300 rounded-lg'
-                  onChange={handleChange}
-                  value={formData.discountPrice}
-                />
-                <div className='flex flex-col items-center'>
-                  <p>Discounted price</p>
-                  {formData.type === 'rent' && (
-                    <span className='text-xs'>($ / month)</span>
-                  )}
+          </div>
+
+          {/* Right Column */}
+          <div className='space-y-6'>
+            {/* Image Upload */}
+            <div className='space-y-4'>
+              <h2 className='text-sm font-semibold text-gray-700 uppercase tracking-wide'>Property Images</h2>
+              <div className='border-2 border-dashed border-gray-200 rounded-xl p-6 text-center transition-all hover:border-blue-500'>
+                <div className='mb-4'>
+                  <FiUploadCloud className='mx-auto text-2xl text-gray-400' />
                 </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className='flex flex-col flex-1 gap-4'>
-          <p className='font-semibold'>
-            Images:
-            <span className='font-normal text-gray-600 ml-2'>
-              The first image will be the cover (max 6)
-            </span>
-          </p>
-          <div className='flex gap-4'>
-            <input
-              onChange={(e) => setFiles(e.target.files)}
-              className='p-3 border border-gray-300 rounded w-full'
-              type='file'
-              id='images'
-              accept='image/*'
-              multiple
-            />
-            <button
-              type='button'
-              disabled={uploading}
-              onClick={handleImageSubmit}
-              className='p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80'
-            >
-              {uploading ? 'Uploading...' : 'Upload'}
-            </button>
-          </div>
-          <p className='text-red-700 text-sm'>
-            {imageUploadError && imageUploadError}
-          </p>
-          {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url, index) => (
-              <div
-                key={url}
-                className='flex justify-between p-3 border items-center'
-              >
-                <img
-                  src={url}
-                  alt='listing image'
-                  className='w-20 h-20 object-contain rounded-lg'
+                <input
+                  type='file'
+                  id='images'
+                  onChange={(e) => setFiles(e.target.files)}
+                  className='hidden'
+                  accept='image/*'
+                  multiple
                 />
-                <button
-                  type='button'
-                  onClick={() => handleRemoveImage(index)}
-                  className='p-3 text-red-700 rounded-lg uppercase hover:opacity-75'
-                >
-                  Delete
-                </button>
+                <label htmlFor='images' className='cursor-pointer'>
+                  <p className='text-sm text-gray-600'>
+                    Drag & drop images or{' '}
+                    <span className='text-blue-500 font-medium'>browse files</span>
+                  </p>
+                  <p className='text-xs text-gray-500 mt-1'>JPEG/PNG, max 2MB per image (up to 6)</p>
+                </label>
+                
+                <div className='mt-4'>
+                  <button
+                    type='button'
+                    onClick={handleImageSubmit}
+                    disabled={uploading || formData.imageUrls.length >= 6}
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors ${
+                      uploading 
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                    }`}
+                  >
+                    {uploading ? 'Uploading...' : 'Upload Selected'}
+                  </button>
+                </div>
+
+                {imageUploadError && (
+                  <div className='mt-4 flex items-center gap-2 text-red-500 text-sm bg-red-50 p-2 rounded-lg'>
+                    <FiInfo className='flex-shrink-0' />
+                    {imageUploadError}
+                  </div>
+                )}
               </div>
-            ))}
-          <button
-            disabled={loading || uploading}
-            className='p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
-          >
-            {loading ? 'Updating...' : 'Update listing'}
-          </button>
-          {error && <p className='text-red-700 text-sm'>{error}</p>}
-        </div>
-      </form>
+
+              {/* Image Previews */}
+              {formData.imageUrls.length > 0 && (
+                <div className='grid grid-cols-3 gap-3'>
+                  {formData.imageUrls.map((url, idx) => (
+                    <div key={url} className='relative group'>
+                      <img
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        className='h-32 w-full object-cover rounded-lg'
+                      />
+                      <button
+                        type='button'
+                        onClick={() => handleRemoveImage(idx)}
+                        className='absolute top-1 right-1 p-1 bg-white/80 rounded-full hover:bg-white transition-colors'
+                      >
+                        <FiX className='w-4 h-4 text-red-500' />
+                      </button>
+                      {idx === 0 && (
+                        <span className='absolute bottom-1 left-1 bg-black/60 text-white text-xs px-2 py-1 rounded'>
+                          Main Image
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Specifications */}
+            <div className='space-y-4'>
+              <h2 className='text-sm font-semibold text-gray-700 uppercase tracking-wide'>Specifications</h2>
+              <div className='grid grid-cols-2 gap-4'>
+                {[
+                  { id: 'bedrooms', label: 'Bedrooms', icon: <FiHome /> },
+                  { id: 'bathrooms', label: 'Bathrooms', icon: <FiHome /> },
+                ].map((spec) => (
+                  <div key={spec.id} className='border border-gray-200 rounded-lg p-3'>
+                    <label className='text-xs font-medium text-gray-500'>{spec.label}</label>
+                    <div className='flex items-center gap-2 mt-1'>
+                      <input
+                        type='number'
+                        id={spec.id}
+                        min='1'
+                        max='10'
+                        value={formData[spec.id]}
+                        onChange={handleChange}
+                        className='w-full text-lg font-medium border-none p-0 focus:ring-0'
+                        required
+                      />
+                      <span className='text-gray-400'>{spec.icon}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Submit Section */}
+            <div className='border-t pt-6'>
+              <button
+                type='submit'
+                disabled={loading || uploading}
+                className={`w-full py-3 px-6 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                  loading || uploading
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                }`}
+              >
+                {loading ? 'Updating Listing...' : 'Save Changes'}
+              </button>
+              
+              {error && (
+                <div className='mt-4 flex items-center gap-2 text-red-500 text-sm bg-red-50 p-2 rounded-lg'>
+                  <FiInfo className='flex-shrink-0' />
+                  {error}
+                </div>
+              )}
+            </div>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaHome, FaInfoCircle, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -6,7 +6,9 @@ import { useEffect, useState } from 'react';
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(window.location.search);
@@ -21,56 +23,76 @@ export default function Header() {
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
+
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [location.search]);
+
   return (
-    <header className='bg-slate-200 shadow-md'>
-      <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
-        <Link to='/'>
-          <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
-            <span className='text-slate-500'>Block</span>
-            <span className='text-slate-700'>Estate</span>
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-white shadow-sm'}`}>
+      <div className='flex justify-between items-center max-w-7xl mx-auto p-4'>
+        <Link to='/' className='flex items-center'>
+          <h1 className='font-bold text-2xl'>
+            <span className='text-blue-600'>Block</span>
+            <span className='text-gray-800'>Estate</span>
           </h1>
         </Link>
+        
         <form
           onSubmit={handleSubmit}
-          className='bg-slate-100 p-3 rounded-lg flex items-center'
+          className='hidden md:flex bg-gray-100 p-2 rounded-full items-center w-1/3 max-w-md'
         >
           <input
             type='text'
-            placeholder='Search...'
-            className='bg-transparent focus:outline-none w-24 sm:w-64'
+            placeholder='Search properties...'
+            className='bg-transparent focus:outline-none w-full px-4 py-1 text-gray-700'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button>
-            <FaSearch className='text-slate-600' />
+          <button className='bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors'>
+            <FaSearch />
           </button>
         </form>
-        <ul className='flex gap-4'>
-          <Link to='/'>
-            <li className='hidden sm:inline text-slate-700 hover:underline'>
-              Home
-            </li>
+
+        <nav className='flex items-center gap-4'>
+          <Link to='/' className='hidden md:flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors'>
+            <FaHome className='text-lg' />
+            <span className='font-medium'>Home</span>
           </Link>
-          <Link to='/about'>
-            <li className='hidden sm:inline text-slate-700 hover:underline'>
-              About
-            </li>
+          <Link to='/about' className='hidden md:flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors'>
+            <FaInfoCircle className='text-lg' />
+            <span className='font-medium'>About</span>
           </Link>
-          <Link to='/profile'>
-            {currentUser ? (
-              <img
-                className='rounded-full h-7 w-7 object-cover'
-                src={currentUser.avatar}
-                alt='profile'
-              />
-            ) : (
-              <Link to='/sign-in'>
-              <li className=' text-slate-700 hover:underline'> Sign in</li>
-              </Link>
-            )}
-          </Link>
-        </ul>
+          
+          {currentUser ? (
+            <Link to='/profile' className='flex items-center gap-1'>
+              {currentUser.avatar ? (
+                <img
+                  className='rounded-full h-8 w-8 object-cover border-2 border-blue-600'
+                  src={currentUser.avatar}
+                  alt='profile'
+                />
+              ) : (
+                <div className='rounded-full h-8 w-8 bg-blue-600 text-white flex items-center justify-center'>
+                  <FaUser />
+                </div>
+              )}
+              <span className='hidden md:inline ml-1 font-medium text-gray-700'>{currentUser.username}</span>
+            </Link>
+          ) : (
+            <Link to='/sign-in' className='bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors flex items-center gap-1'>
+              <FaUser />
+              <span className='font-medium'>Sign In</span>
+            </Link>
+          )}
+        </nav>
       </div>
     </header>
   );

@@ -1,48 +1,70 @@
 import { Link } from 'react-router-dom';
-import { MdLocationOn } from 'react-icons/md';
+import { MdLocationOn, MdKingBed, MdBathtub } from 'react-icons/md';
+import { FaRulerCombined } from 'react-icons/fa';
 
 export default function ListingItem({ listing }) {
   return (
-    <div className='bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full sm:w-[330px]'>
-      <Link to={`/listing/${listing._id}`}>
-        <img
-          src={
-            listing.imageUrls[0] ||
-            'https://via.placeholder.com/320x220'
-          }
-          alt='listing cover'
-          className='h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300'
-        />
-        <div className='p-3 flex flex-col gap-2 w-full'>
-          <p className='truncate text-lg font-semibold text-slate-700'>
-            {listing.name}
-          </p>
-          <div className='flex items-center gap-1'>
-            <MdLocationOn className='h-4 w-4 text-green-700' />
-            <p className='text-sm text-gray-600 truncate w-full'>
-              {listing.address}
+    <div className='bg-white shadow-md hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden w-full sm:w-[330px] group'>
+      <Link to={`/listing/${listing._id}`} className='block h-full'>
+        {/* Image with overlay effect */}
+        <div className='relative overflow-hidden h-[220px]'>
+          <img
+            src={listing.imageUrls[0] || 'https://via.placeholder.com/330x220'}
+            alt={listing.name}
+            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
+          />
+          {/* Status badge */}
+          {listing.offer && (
+            <div className='absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full'>
+              {listing.type === 'rent' ? 'SPECIAL OFFER' : 'PRICE REDUCED'}
+            </div>
+          )}
+        </div>
+
+        {/* Listing details */}
+        <div className='p-4 flex flex-col gap-3'>
+          {/* Price */}
+          <div className='flex items-center justify-between'>
+            <p className='text-xl font-bold text-blue-800'>
+              ${listing.offer
+                ? listing.discountPrice.toLocaleString('en-US')
+                : listing.regularPrice.toLocaleString('en-US')}
+              {listing.type === 'rent' && <span className='text-sm font-normal text-gray-500'>/mo</span>}
             </p>
+            {listing.offer && (
+              <p className='text-sm text-gray-500 line-through'>
+                ${listing.regularPrice.toLocaleString('en-US')}
+              </p>
+            )}
           </div>
-          <p className='text-sm text-gray-600 line-clamp-2'>
+
+          {/* Title and address */}
+          <h3 className='text-lg font-semibold text-gray-900 truncate'>
+            {listing.name}
+          </h3>
+          <div className='flex items-center gap-1 text-gray-600'>
+            <MdLocationOn className='flex-shrink-0 h-4 w-4 text-blue-600' />
+            <p className='text-sm truncate'>{listing.address}</p>
+          </div>
+
+          {/* Description */}
+          <p className='text-gray-600 text-sm line-clamp-2'>
             {listing.description}
           </p>
-          <p className='text-slate-500 mt-2 font-semibold '>
-            $
-            {listing.offer
-              ? listing.discountPrice.toLocaleString('en-US')
-              : listing.regularPrice.toLocaleString('en-US')}
-            {listing.type === 'rent' && ' / month'}
-          </p>
-          <div className='text-slate-700 flex gap-4'>
-            <div className='font-bold text-xs'>
-              {listing.bedrooms > 1
-                ? `${listing.bedrooms} beds `
-                : `${listing.bedrooms} bed `}
+
+          {/* Features */}
+          <div className='flex items-center justify-between mt-3 pt-3 border-t border-gray-100'>
+            <div className='flex items-center gap-1 text-sm text-gray-700'>
+              <MdKingBed className='h-4 w-4 text-blue-600' />
+              <span>{listing.bedrooms} {listing.bedrooms > 1 ? 'Beds' : 'Bed'}</span>
             </div>
-            <div className='font-bold text-xs'>
-              {listing.bathrooms > 1
-                ? `${listing.bathrooms} baths `
-                : `${listing.bathrooms} bath `}
+            <div className='flex items-center gap-1 text-sm text-gray-700'>
+              <MdBathtub className='h-4 w-4 text-blue-600' />
+              <span>{listing.bathrooms} {listing.bathrooms > 1 ? 'Baths' : 'Bath'}</span>
+            </div>
+            <div className='flex items-center gap-1 text-sm text-gray-700'>
+              <FaRulerCombined className='h-3 w-3 text-blue-600' />
+              <span>{listing.area} sqft</span>
             </div>
           </div>
         </div>

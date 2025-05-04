@@ -1,25 +1,14 @@
+
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
-
-import {
-  getDownloadURL,
-  getStorage,
-  list,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-  deleteUserFailure,
-  deleteUserStart,
-  deleteUserSuccess,
-  signOutUserStart,
-} from '../redux/user/userSlice';
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { FiEdit, FiTrash2, FiLogOut, FiUser, FiMail, FiLock, FiHome, FiPlus, FiImage } from 'react-icons/fi';
+import { IoCheckmarkCircleOutline } from 'react-icons/io5';
+
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -156,127 +145,203 @@ export default function Profile() {
     }
   };
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <input
-          onChange={(e) => setFile(e.target.files[0])}
-          type='file'
-          ref={fileRef}
-          hidden
-          accept='image/*'
-        />
-        <img
-          onClick={() => fileRef.current.click()}
-          src={formData.avatar || currentUser.avatar}
-          alt='profile'
-          className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
-        />
-        <p className='text-sm self-center'>
-          {fileUploadError ? (
-            <span className='text-red-700'>
-              Error Image upload (image must be less than 2 mb)
-            </span>
-          ) : filePerc > 0 && filePerc < 100 ? (
-            <span className='text-slate-700'>{`Uploading ${filePerc}%`}</span>
-          ) : filePerc === 100 ? (
-            <span className='text-green-700'>Image successfully uploaded!</span>
-          ) : (
-            ''
-          )}
-        </p>
-        <input
-          type='text'
-          placeholder='username'
-          defaultValue={currentUser.username}
-          id='username'
-          className='border p-3 rounded-lg'
-          onChange={handleChange}
-        />
-        <input
-          type='email'
-          placeholder='email'
-          id='email'
-          defaultValue={currentUser.email}
-          className='border p-3 rounded-lg'
-          onChange={handleChange}
-        />
-        <input
-          type='password'
-          placeholder='password'
-          onChange={handleChange}
-          id='password'
-          className='border p-3 rounded-lg'
-        />
-        <button
-          disabled={loading}
-          className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
-        >
-          {loading ? 'Loading...' : 'Update'}
-        </button>
-        <Link
-          className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'
-          to={'/create-listing'}
-        >
-          Create Listing
-        </Link>
-      </form>
-      <div className='flex justify-between mt-5'>
-        <span
-          onClick={handleDeleteUser}
-          className='text-red-700 cursor-pointer'
-        >
-          Delete account
-        </span>
-        <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>
-          Sign out
-        </span>
-      </div>
+    <div className='max-w-4xl mx-auto p-4'>
+      <div className='bg-white rounded-xl shadow-sm border border-gray-100'>
+        {/* Profile Header */}
+        <div className='p-6 border-b border-gray-100'>
+          <h1 className='text-xl font-semibold text-gray-900'>Account Settings</h1>
+          <p className='text-sm text-gray-500 mt-1'>Manage your profile and listings</p>
+        </div>
 
-      <p className='text-red-700 mt-5'>{error ? error : ''}</p>
-      <p className='text-green-700 mt-5'>
-        {updateSuccess ? 'User is updated successfully!' : ''}
-      </p>
-      <button onClick={handleShowListings} className='text-green-700 w-full'>
-        Show Listings
-      </button>
-      <p className='text-red-700 mt-5'>
-        {showListingsError ? 'Error showing listings' : ''}
-      </p>
-
-      {userListings &&
-        userListings.length > 0 &&
-        <div className="flex flex-col gap-4">
-          <h1 className='text-center mt-7 text-2xl font-semibold'>Your Listings</h1>
-          {userListings.map((listing) => (
-            <div
-              key={listing._id}
-              className='border rounded-lg p-3 flex justify-between items-center gap-4'
-            >
-              <Link to={`/listing/${listing._id}`}>
-                <img
-                  src={listing.imageUrls[0]}
-                  alt='listing cover'
-                  className='h-16 w-16 object-contain'
-                />
-              </Link>
-              <Link
-                className='text-slate-700 font-semibold  hover:underline truncate flex-1'
-                to={`/listing/${listing._id}`}
+        {/* Profile Content */}
+        <div className='p-6'>
+          {/* Avatar Upload */}
+          <div className='flex items-center gap-4 mb-8'>
+            <div className='relative group'>
+              <input
+                onChange={(e) => setFile(e.target.files[0])}
+                type='file'
+                ref={fileRef}
+                hidden
+                accept='image/*'
+              />
+              <button
+                onClick={() => fileRef.current.click()}
+                className='relative rounded-full w-16 h-16 overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-colors'
               >
-                <p>{listing.name}</p>
-              </Link>
-
-              <div className='flex flex-col item-center'>
-                <button onClick={()=>handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete
-                </button>
-                <Link to={`/update-listing/${listing._id}`}>
-                  <button className='text-green-700 uppercase'>Edit</button>
-                </Link>
+                <img
+                  src={formData.avatar || currentUser.avatar}
+                  alt='profile'
+                  className='w-full h-full object-cover'
+                />
+                <div className='absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'>
+                  <FiImage className='text-white text-lg' />
+                </div>
+              </button>
+              <div className='text-sm'>
+                {fileUploadError ? (
+                  <span className='text-red-500 flex items-center gap-1'>
+                    <span>Upload failed (max 2MB)</span>
+                  </span>
+                ) : filePerc > 0 && filePerc < 100 ? (
+                  <span className='text-gray-600'>{`Uploading ${filePerc}%`}</span>
+                ) : filePerc === 100 ? (
+                  <span className='text-green-500 flex items-center gap-1'>
+                    <IoCheckmarkCircleOutline /> Success
+                  </span>
+                ) : null}
               </div>
             </div>
-          ))}
-        </div>}
+          </div>
+
+          {/* Update Form */}
+          <form onSubmit={handleSubmit} className='space-y-4 mb-8'>
+            <div className='space-y-4'>
+              <div className='flex items-center gap-2'>
+                <FiUser className='text-gray-400' />
+                <input
+                  type='text'
+                  placeholder='Username'
+                  defaultValue={currentUser.username}
+                  id='username'
+                  className='flex-1 p-2 border-b border-gray-200 focus:border-blue-500 outline-none'
+                  onChange={handleChange}
+                />
+              </div>
+              
+              <div className='flex items-center gap-2'>
+                <FiMail className='text-gray-400' />
+                <input
+                  type='email'
+                  placeholder='Email'
+                  id='email'
+                  defaultValue={currentUser.email}
+                  className='flex-1 p-2 border-b border-gray-200 focus:border-blue-500 outline-none'
+                  onChange={handleChange}
+                />
+              </div>
+              
+              <div className='flex items-center gap-2'>
+                <FiLock className='text-gray-400' />
+                <input
+                  type='password'
+                  placeholder='New Password'
+                  onChange={handleChange}
+                  id='password'
+                  className='flex-1 p-2 border-b border-gray-200 focus:border-blue-500 outline-none'
+                />
+              </div>
+            </div>
+
+            <div className='flex items-center gap-3 pt-4'>
+              <button
+                disabled={loading}
+                className='px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors flex items-center gap-2'
+              >
+                {loading ? (
+                  <span className='animate-spin'>↻</span>
+                ) : (
+                  <>
+                    <FiEdit className='text-sm' /> Update
+                  </>
+                )}
+              </button>
+              
+              <Link
+                to='/create-listing'
+                className='px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2'
+              >
+                <FiPlus className='text-sm' /> New Listing
+              </Link>
+            </div>
+
+            {error && (
+              <p className='text-red-500 text-sm mt-2'>{error}</p>
+            )}
+            {updateSuccess && (
+              <p className='text-green-500 text-sm mt-2 flex items-center gap-1'>
+                <IoCheckmarkCircleOutline /> Profile updated
+              </p>
+            )}
+          </form>
+
+          {/* Listings Section */}
+          <div className='mt-8'>
+            <div className='flex items-center justify-between mb-4'>
+              <h2 className='text-sm font-semibold text-gray-700'>Your Listings</h2>
+              <button
+                onClick={handleShowListings}
+                className='text-sm text-gray-600 hover:text-blue-500 flex items-center gap-1'
+              >
+                <FiHome className='text-sm' /> {userListings.length > 0 ? 'Refresh' : 'Show'}
+              </button>
+            </div>
+
+            {showListingsError && (
+              <p className='text-red-500 text-sm mb-4'>Error loading listings</p>
+            )}
+
+            <div className='space-y-3'>
+              {userListings.map((listing) => (
+                <div
+                  key={listing._id}
+                  className='group flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors'
+                >
+                  <Link to={`/listing/${listing._id}`} className='flex items-center gap-3 flex-1'>
+                    <img
+                      src={listing.imageUrls[0]}
+                      alt='listing cover'
+                      className='w-12 h-12 object-cover rounded-md'
+                    />
+                    <div>
+                      <h3 className='text-sm font-medium text-gray-900 truncate'>{listing.name}</h3>
+                      <p className='text-xs text-gray-500'>
+                        ${listing.regularPrice.toLocaleString()}
+                        {listing.type === 'rent' && '/mo'}
+                      </p>
+                    </div>
+                  </Link>
+                  <div className='flex items-center gap-2'>
+                    <Link
+                      to={`/update-listing/${listing._id}`}
+                      className='p-1.5 hover:bg-gray-100 rounded-md text-gray-500 hover:text-blue-500'
+                      title='Edit'
+                    >
+                      <FiEdit className='text-sm' />
+                    </Link>
+                    <button
+                      onClick={() => handleListingDelete(listing._id)}
+                      className='p-1.5 hover:bg-gray-100 rounded-md text-gray-500 hover:text-red-500'
+                      title='Delete'
+                    >
+                      <FiTrash2 className='text-sm' />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Account Actions */}
+          <div className='mt-8 pt-6 border-t border-gray-100 flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <button
+                onClick={handleSignOut}
+                className='text-sm text-gray-600 hover:text-blue-500 flex items-center gap-1'
+              >
+                <FiLogOut /> Sign Out
+              </button>
+              <span className='text-gray-300'>|</span>
+              <button
+                onClick={handleDeleteUser}
+                className='text-sm text-red-500 hover:text-red-600 flex items-center gap-1'
+              >
+                <FiTrash2 /> Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
