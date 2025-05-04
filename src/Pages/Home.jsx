@@ -153,26 +153,15 @@ export default function Home() {
 
       {/* Call to Action */}
       <section className='bg-gradient-to-r from-blue-800 to-blue-900 py-20'>
-        <div className='max-w-4xl mx-auto text-center px-6'>
-          <h2 className='text-3xl sm:text-4xl font-bold text-white mb-6'>Need Help Finding Your Perfect Home?</h2>
-          <p className='text-xl text-blue-100 mb-8 max-w-2xl mx-auto opacity-90'>
-            Our dedicated team is ready to assist you in your property search.
-          </p>
-          <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <Link
-              to={'/search'}
-              className='bg-white text-blue-700 hover:bg-gray-100 font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
-            >
-              Start Your Search
-            </Link>
-            <Link
-              to={'/contact'}
-              className='bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
-            >
-              Contact Agent
-            </Link>
-          </div>
-        </div>
+
+      {/* CTA Section */}
+      <div className=" text-white rounded-xl p-8 text-center">
+        <h2 className="text-2xl font-semibold mb-4">Ready to Find Your Dream Property?</h2>
+        <p className="mb-6">Schedule a free consultation with one of our experts</p>
+        <Link to={"/about"} className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+          Contact Us
+        </Link>
+      </div>
       </section>
     </div>
   );
